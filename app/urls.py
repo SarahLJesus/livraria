@@ -11,7 +11,7 @@ from rest_framework.routers import DefaultRouter
 
 from uploader.router import router as uploader_router
 
-from core.views import UserViewSet, CategoriaViewSet, EditoraViewSet, AutorViewSet, LivroViewSet
+from core.views import UserViewSet, CategoriaViewSet, EditoraViewSet, AutorViewSet, LivroViewSet, CompraViewSet
 
 router = DefaultRouter()
 
@@ -19,6 +19,8 @@ router.register(r'usuarios', UserViewSet, basename='usuarios')
 router.register(r'categorias', CategoriaViewSet, basename='categorias')
 router.register(r'autores', AutorViewSet, basename='autores')
 router.register(r'livros', LivroViewSet, basename='livros')
+router.register(r'editora', EditoraViewSet, basename='editoras')
+router.register(r'compras', CompraViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
