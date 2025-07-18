@@ -24,6 +24,14 @@ class CompraCreateUpdateSerializer(ModelSerializer):
         compra.save()
         return compra
 
+    def update(self, compra, validated_data):
+        itens_data = validated_data.pop('itens', [])
+        if itens_data:
+            compra.itens.all().delete()
+            for item_data in itens_data:
+                ItensCompra.objects.create(compra=compra, **item_data)
+        return super().update(compra, validated_data)
+
 
 class ItensCompraSerializer(ModelSerializer):
     total = SerializerMethodField()
@@ -37,6 +45,15 @@ class ItensCompraSerializer(ModelSerializer):
         depth = 1
 
 
+class ItensCompraListSerializer(ModelSerializer):
+    livro = CharField(source='livro.titulo', read_only=True)
+
+    class Meta:
+        model = ItensCompra
+        fields = ('quantidade', 'livro')
+        depth = 1
+
+
 class CompraSerializer(ModelSerializer):
     usuario = CharField(source='usuario.email', read_only=True)
     status = CharField(source='get_status_display', read_only=True)
@@ -45,3 +62,12 @@ class CompraSerializer(ModelSerializer):
     class Meta:
         model = Compra
         fields = ('id', 'usuario', 'status', 'total', 'itens')
+
+
+class CompraListSerializer(ModelSerializer):
+    usuario = CharField(source='usuario.e-mail', read_only=True)
+    itens = ItensCompraListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Compra
+        fields = ('id', 'usuario', 'itens')
